@@ -23,7 +23,43 @@ struct transaction {
 	char date[11];
 	char description[20];
 };
-
+int common_dates1(char *date1, char *date2){
+	int i = 0;
+	while (i < 10){
+		if (date1[i] == date2[i]){
+			i++;
+		}
+		else
+			return 0;
+	}
+	return 1;
+}
 struct transaction * sortedArraysCommonElements(struct transaction *A, int ALen, struct transaction *B, int BLen) {
-	return NULL;
+	if (A == NULL || B == NULL)
+		return NULL;
+	struct transaction *C = (struct transaction*)malloc(sizeof(struct transaction) * (ALen + BLen));
+	int k = 0;
+	for (int i = 0; i < ALen; i++){
+		for (int j = 0; j < BLen; j++){
+			if (common_dates1(A[i].date, B[j].date)){
+				C[k++] = B[j];
+				continue;
+			}
+		}
+	}
+	/*int i = 0, j = 0;
+	while (i < ALen){
+		printf("ghfd\n");
+		if (j == BLen - 1)
+			j = 0;
+		if (common_dates1(A[i].date, B[j].date)){
+			C[k++] = B[j++];
+			i++;
+		}
+	}*/
+	if (k == 0){
+		printf("k %d\n", k);
+		return NULL;
+	}
+	return C;
 }
