@@ -15,49 +15,63 @@ There are better ways of solving the problem than a brute-force solution which i
 complexity .
 */
 #include <stdio.h>
-/*void swap(int *num1, int *num2){
-	*num1 = *num1 + *num2;
-	*num2 = *num1 - *num2;
-	*num1 = *num1 - *num2;
-}*/
-int partition(int A[], int start, int end){
-	int pivot = A[end];
-	int p_index = start;
-	for (int i = start; i <= end - 1; i++){
-		if (A[i] <= pivot){
-			//swap(&A[i], &A[p_index]);
-			A[i] = A[i] + A[p_index];
-			A[p_index] = A[i] - A[p_index];
-			A[i] = A[i] - A[p_index];
-			p_index++;
+#include <malloc.h>
+void merge(int *A, int min, int mid, int max)
+{
+	int *temp_array = (int*)malloc(sizeof(int)*max);
+	int i, j, k, m;
+	j = min;
+	m = mid + 1;
+	for (i = min; j <= mid && m <= max; i++)
+	{
+		if (A[j] <= A[m])
+		{
+			temp_array[i] = A[j];//left sub array
+			j++;
+		}
+		else
+		{
+			temp_array[i] = A[m];//right sub array
+			m++;
 		}
 	}
-	//swap(&A[end], &A[p_index]);
-	A[p_index] = A[p_index] + A[end];
-	A[end] = A[p_index] - A[end];
-	A[p_index] = A[p_index] - A[end];
-	return p_index;
-}
-void quick_sort(int A[], int start, int end){
-	if (start < end){
-		int pindex = partition(A, start, end);
-		quick_sort(A, start, pindex - 1);
-		quick_sort(A, pindex + 1, end);
+	if (j>mid)//if all the left sub array elements are merged
+	{
+		for (k = m; k <= max; k++)
+		{
+			temp_array[i] = A[k];
+			i++;
+		}
 	}
+	else
+	{
+		for (k = j; k <= mid; k++)
+		{
+			temp_array[i] = A[k];
+			i++;
+		}
+	}
+	for (k = min; k <= max; k++)
+		A[k] = temp_array[k];
+}
+void partition_merge(int *A, int low, int high)
+{
+	int mid;
+	if (low < high) {
+		mid = (low + high) / 2;
+		partition_merge(A, low, mid);
+		partition_merge(A, mid + 1, high);
+		merge(A, low, mid, high);
+	}
+	return;
 }
 int findSingleOccurenceNumber(int *A, int len) {
 	if (A == NULL)
 		return -1;
-	for (int i = 0; i < len; i++){
-		printf("%d\n", A[i]);
-	}
-	quick_sort(A, 0, len - 1);
-	for (int i = 0; i < len; i++){
-		printf("%d\n", A[i]);
-	}
+	partition_merge(A, 0, len - 1);
 	for (int i = 0; i < len; i++){
 		if (A[i] == A[i + 1])
-			i = i + 3;
+			i = i + 2;
 		else
 			return A[i];
 	}
